@@ -9,7 +9,7 @@ import useStyles from '../styles/ViewPlaylistPageStyles';
 
 const cookies = new Cookies();
 
-Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
+Axios.defaults.headers.common['access-token'] = "" + process.env.REACT_APP_ACCESS_TOKEN
 
 export default function ViewPlaylistPage(props) {
     const classes = useStyles();
