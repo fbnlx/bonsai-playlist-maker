@@ -10,7 +10,7 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Axios from 'axios';
 import useStyles from '../styles/NewPlaylistPageStyles';
 
-Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
+Axios.defaults.headers.common['access-token'] = process.env.ACCESS_TOKEN;
 
 const cookies = new Cookies();
 
