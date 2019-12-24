@@ -5,7 +5,7 @@ import Axios from 'axios';
 import Song from './Song';
 import useStyles from '../styles/SongListStyles';
 
-Axios.defaults.headers.common['access-token'] = process.env.ACCESS_TOKEN;
+Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
 
 export default function SongList(props) {
     const classes = useStyles();

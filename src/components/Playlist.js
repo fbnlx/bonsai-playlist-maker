@@ -14,7 +14,7 @@ import useStyles from '../styles/PlaylistStyles';
 import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
-Axios.defaults.headers.common['access-token'] = process.env.ACCESS_TOKEN;
+Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
 
 export default function Playlist(props) {
     const classes = useStyles();

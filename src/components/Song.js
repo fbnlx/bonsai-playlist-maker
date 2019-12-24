@@ -11,7 +11,7 @@ import Rating from '@material-ui/lab/Rating';
 import Axios from 'axios';
 import useStyles from '../styles/SongStyles';
 
-Axios.defaults.headers.common['access-token'] = process.env.ACCESS_TOKEN;
+Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
 
 const labels = {
     1: 'Awful :(',
