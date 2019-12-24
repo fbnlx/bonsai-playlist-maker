@@ -44,10 +44,6 @@ export default function NewPlaylistPage(props) {
         setPlaylistSongs(arrayMove(playlistSongs, oldIndex, newIndex));
     };
 
-    const clearList = () => {
-        props.history.push("/newPlaylist");
-    }
-
     async function handlesubmit(event) {
         let newPlaylistObject = {
             "name": playlistName, songs: playlistSongs.map((s, idx) => {

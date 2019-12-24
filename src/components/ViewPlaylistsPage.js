@@ -58,8 +58,9 @@ export default function ViewPlaylistPage(props) {
                             size="small"
                             className={classes.button}
                             startIcon={<CreateIcon />}
+                            onClick={() => props.history.push("/newPlaylist")}
                         >
-                            Create one!
+                            Create one
                         </Button>
                     </div>
                     :
