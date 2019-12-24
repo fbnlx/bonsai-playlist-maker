@@ -1,14 +1,18 @@
 import React from 'react';
+import { arrayMove } from 'react-sortable-hoc';
+import Axios from 'axios';
+import uuid from 'react-uuid'
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import SaveIcon from '@material-ui/icons/Save';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar/Snackbar';
 import DraggablePlaylist from './DraggablePlaylist';
-import { arrayMove } from 'react-sortable-hoc';
-import Axios from 'axios';
 import useStyles from '../styles/PlaylistStyles';
+import { IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 Axios.defaults.headers.common['access-token'] = 'rFxfO0Tid28E4JwU';
 
@@ -17,6 +21,8 @@ export default function Playlist(props) {
     const id = props.id;
     const [playlistSongs, setPlaylistSongs] = React.useState([]);
     const [deleteList, setDeleteList] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [updateStatus, setUpdateStatus] = React.useState("");
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
         setPlaylistSongs(arrayMove(playlistSongs, oldIndex, newIndex));
@@ -47,7 +53,7 @@ export default function Playlist(props) {
         setPlaylistSongs(newPlaylistSongs);
     }
 
-    async function handleClick() {
+    const handleClick = async () => {
         const promises = deleteList.map(async idToDelete => {
             const response =
                 await Axios.delete(
@@ -56,49 +62,92 @@ export default function Playlist(props) {
             return response.data;
         });
         Promise.all(promises).then(p => {
-            const listOrderPromises = playlistSongs.map(async (song, idx) => {
-                const listOrderResponse =
-                    await Axios.patch(
-                        `https://bonsai-playlist.herokuapp.com/playlists/${id}/songs/${song.id}`,
-                        {
-                            "position": idx
-                        }
-                    );
-                return listOrderResponse.data;
-            });
-            Promise.all(listOrderPromises).then(q => {
-                console.log(q);
-            })
+            console.log(p);
+            reorderList();
         })
 
     }
 
+    const reorderList = async () => {
+        try {
+            for (const song of playlistSongs) {
+                const response = await Axios.patch(
+                    `https://bonsai-playlist.herokuapp.com/playlists/${id}/songs/${song.id}`,
+                    {
+                        "position": uuid()
+                    }
+                );
+            }
+            for (let i = 0; i < playlistSongs.length; i++) {
+                const response2 = await Axios.patch(
+                    `https://bonsai-playlist.herokuapp.com/playlists/${id}/songs/${playlistSongs[i].id}`,
+                    {
+                        "position": i
+                    }
+                );
+            }
+            setUpdateStatus("Playlist updated successfully");
+            setOpen(true);
+        } catch(err) {
+            console.log(err);
+            setUpdateStatus("Failed to update playlist");
+            setOpen(true);
+        }
+        
+    }
+
+    const closeSnackbar = () => {
+        setOpen(false);
+    }
+
     return (
-        <Card className={classes.card}>
-            <CardContent>
-                <Typography variant="h5" component="h2">
-                    {props.name}
-                </Typography>
-                <DraggablePlaylist
-                    playlistId={props.id}
-                    origin="userplaylists"
-                    playlistSongs={playlistSongs}
-                    onSortEnd={onSortEnd}
-                    markForDelete={markForDelete}
-                />
-            </CardContent>
-            <CardActions>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    className={classes.button}
-                    onClick={handleClick}
-                    startIcon={<SaveIcon />}
-                >
-                    Save
+        <div>
+            <Card className={classes.card}>
+                <CardContent>
+                    <Typography variant="h5" component="h2">
+                        {props.name}
+                    </Typography>
+                    <DraggablePlaylist
+                        playlistId={props.id}
+                        origin="userplaylists"
+                        playlistSongs={playlistSongs}
+                        onSortEnd={onSortEnd}
+                        markForDelete={markForDelete}
+                    />
+                </CardContent>
+                <CardActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        className={classes.button}
+                        onClick={handleClick}
+                        startIcon={<SaveIcon />}
+                    >
+                        Save
                 </Button>
-            </CardActions>
-        </Card>
+                </CardActions>
+            </Card>
+            <Snackbar
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                open={open}
+                autoHideDuration={3000}
+                message={<span id="message-id">{updateStatus}</span>}
+                ContentProps={{
+                    "aria-describedby": "message-id"
+                }}
+                onClose={closeSnackbar}
+                action={[
+                    <IconButton
+                        onClick={closeSnackbar}
+                        color={"inherit"}
+                        key="close"
+                        aria-label="close"
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                ]}
+            />
+        </div>
     );
 }

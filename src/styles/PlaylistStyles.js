@@ -14,8 +14,5 @@ export default makeStyles(theme => ({
         width: '100%',
         maxWidth: '560px',
         backgroundColor: theme.palette.background.paper,
-    },
-    button: {
-        margin: 'auto'
     }
 }));
